@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilhamsyah Putra | Finance Professional with a Digital Mindset</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 for Crisp Corporate & UI Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#051221',
+                            900: '#07192D',
+                            800: '#0A2540',
+                            700: '#103459',
+                        },
+                        royal: {
+                            500: '#2563EB',
+                            600: '#1D63ED',
+                            700: '#174EC2',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -5px rgba(10, 37, 64, 0.06)',
+                        'card': '0 4px 20px -2px rgba(10, 37, 64, 0.05)',
+                        'float': '0 20px 40px -10px rgba(7, 25, 45, 0.14)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Utility Styles for Overlays & Animations -->
+    <style>
+        .hero-bg {
+            background: linear-gradient(115deg, #051324 0%, #0A2540 52%, #133E6C 85%, #1D63ED 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2.5px;
+            background-color: #1D63ED;
+            border-radius: 9999px;
+            transition: width 0.25s ease;
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Admin Mode Highlight Ring */
+        body.admin-active .admin-only {
+            display: inline-flex !important;
+        }
+        body.admin-active .admin-block {
+            display: block !important;
+        }
+        body:not(.admin-active) .admin-only,
+        body:not(.admin-active) .admin-block {
+            display: none !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased selection:bg-royal-600 selection:text-white">
+
+    <!-- =====================================================================
+         ADMIN CONTROL TOP BAR (Only visible when logged in as Admin)
+    ====================================================================== -->
+    <div id="admin-toolbar" class="admin-block sticky top-0 z-[60] w-full bg-amber-500 text-navy-950 shadow-md border-b border-amber-600/30">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 text-xs sm:text-sm font-extrabold">
+                <span class="w-2.5 h-2.5 rounded-full bg-navy-950 animate-pulse"></span>
+                <span>MODE ADMIN AKTIF</span>
+                <span id="sync-status-badge" class="hidden sm:inline-block text-[11px] font-semibold bg-navy-950/10 px-2.5 py-0.5 rounded-full">
+                    Penyimpanan: Browser Lokal
+                </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openProfileEditModal()" class="inline-flex items-center gap-1.5 bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span>Edit Profil</span>
+                </button>
+                <button onclick="openApiConfigModal()" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-100 text-navy-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer">
+                    <i class="fa-solid fa-table"></i>
+                    <span>Pengaturan API / Sheets</span>
+                </button>
+                <button onclick="logoutAdmin()" class="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar Mode Admin</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         1. TOP NAVIGATION BAR (Full-Width Sticky Header)
+    ====================================================================== -->
+    <header id="navbar" class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all duration-300">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Monogram Logo + Name & Title -->
+                <a href="#home" class="flex items-center gap-3 group focus:outline-none shrink-0">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-navy-800 to-royal-600 flex items-center justify-center text-white font-extrabold text-xl tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
+                        <span class="lowercase">i</span><span>P</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span id="nav-brand-name" class="text-navy-900 font-bold text-base sm:text-lg leading-tight tracking-tight">Ilhamsyah Putra</span>
+                        <span id="nav-brand-role" class="text-slate-500 text-xs font-medium">Finance Professional</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Horizontal Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold text-slate-600">
+                    <a href="#home" class="nav-link active text-royal-600 hover:text-royal-600 transition-colors">Home</a>
+                    <a href="#about" class="nav-link hover:text-royal-600 transition-colors">About</a>
+                    <a href="#experience" class="nav-link hover:text-royal-600 transition-colors">Experience</a>
+                    <a href="#projects" class="nav-link hover:text-royal-600 transition-colors">Projects</a>
+                    <a href="#skills" class="nav-link hover:text-royal-600 transition-colors">Skills</a>
+                    <a href="#certificates" class="nav-link hover:text-royal-600 transition-colors">Certificates</a>
+                    <a href="#education" class="nav-link hover:text-royal-600 transition-colors">Education</a>
+                    <a href="#contact" class="nav-link hover:text-royal-600 transition-colors">Contact</a>
+                </nav>
+
+                <!-- Right Action CTA: Download CV + Mobile Hamburger -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <button onclick="handleDownloadCV()" class="inline-flex items-center gap-2 bg-navy-900 hover:bg-royal-600 text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 cursor-pointer">
+                        <i class="fa-solid fa-download text-xs"></i>
+                        <span>Download CV</span>
+                    </button>
+
+                    <button id="mobile-menu-btn" aria-label="Buka Menu" class="lg:hidden p-2.5 rounded-xl text-navy-900 hover:bg-slate-100 transition-colors">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 px-5 pt-3 pb-5 shadow-lg">
+            <div class="flex flex-col space-y-2.5 text-sm font-semibold text-slate-700">
+                <a href="#home" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Home</a>
+                <a href="#about" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">About</a>
+                <a href="#experience" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Experience</a>
+                <a href="#projects" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Projects</a>
+                <a href="#skills" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Skills</a>
+                <a href="#certificates" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Certificates</a>
+                <a href="#education" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Education</a>
+                <a href="#contact" class="mobile-nav-link px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-royal-600">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         2. HERO / PROFESSIONAL INTRODUCTION (Full-Width Fluid Banner)
+    ====================================================================== -->
+    <section id="home" class="hero-bg w-full text-white pt-12 pb-24 lg:pt-16 lg:pb-28">
+        <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
+        <div class="hidden md:block absolute -right-16 top-0 bottom-0 w-[28vw] max-w-md bg-gradient-to-b from-sky-400/20 via-royal-600/30 to-royal-500/50 skew-x-[-18deg] pointer-events-none"></div>
+        <div class="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-royal-600/20 blur-3xl pointer-events-none"></div>
+
+        <div class="relative w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                
+                <!-- Left Column: Greeting, Headline, Summary & CTA Buttons -->
+                <div class="lg:col-span-7 space-y-6 text-left">
+                    <div class="inline-flex items-center gap-3">
+                        <span class="text-sky-300 font-semibold text-sm sm:text-base tracking-wide">Hello, I'm</span>
+                        <span class="w-16 h-[2px] bg-sky-400/60 rounded-full"></span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h1 id="hero-name" class="text-4xl sm:text-5xl lg:text-6xl xl:text-[64px] font-extrabold tracking-tight leading-[1.1] text-white">
+                            Ilhamsyah Putra
+                        </h1>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[40px] font-bold leading-tight text-white/95">
+                            <span id="hero-headline-prefix">Finance Professional</span> <br class="hidden sm:inline">
+                            with a <span id="hero-headline-accent" class="text-sky-400">Digital Mindset.</span>
+                        </h2>
+                    </div>
+
+                    <p id="hero-summary" class="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl font-normal">
+                        Berpengalaman dalam administrasi keuangan, akuntansi dan perpajakan, serta memiliki ketertarikan pada pengembangan aplikasi digital untuk meningkatkan efisiensi proses bisnis.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#projects" class="inline-flex items-center gap-2.5 bg-royal-600 hover:bg-royal-500 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl shadow-lg shadow-royal-600/30 transition-all duration-200 hover:-translate-y-0.5">
+                            <i class="fa-solid fa-briefcase text-sm"></i>
+                            <span>View My Projects</span>
+                        </a>
+                        
+                        <button onclick="handleDownloadCV()" class="inline-flex items-center gap-2.5 bg-white/5 hover:bg-white/15 border border-white/35 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl backdrop-blur-sm transition-all duration-200 cursor-pointer">
+                            <i class="fa-solid fa-download text-sm"></i>
+                            <span>Download CV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Professional Portrait Container -->
+                <div class="lg:col-span-5 flex justify-center lg:justify-end relative">
+                    <div class="relative w-full max-w-[380px] xl:max-w-[440px]">
+                        <div class="absolute inset-4 bg-gradient-to-tr from-royal-600/40 to-sky-300/20 rounded-3xl blur-2xl"></div>
+                        
+                        <div class="relative rounded-3xl overflow-hidden border border-white/15 bg-gradient-to-b from-navy-700/60 to-navy-900/90 shadow-2xl group">
+                            <img 
+                                id="hero-portrait-img"
+                                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80" 
+                                alt="Foto Profil Profesional - Ilhamsyah Putra"
+                                onerror="this.src='https://placehold.co/600x700/0A2540/FFFFFF?text=Foto+Profil+Anda'"
+                                class="w-full h-[380px] sm:h-[440px] xl:h-[470px] object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                            >
+                            <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent"></div>
+
+                            <!-- Admin-Only Photo Replacement Button -->
+                            <label for="photo-upload-input" title="Ganti foto profil Anda" class="admin-only absolute bottom-4 right-4 items-center gap-2 bg-amber-500 hover:bg-amber-400 text-navy-950 text-xs font-bold px-3.5 py-2 rounded-xl cursor-pointer shadow-lg transition-all">
+                                <i class="fa-solid fa-camera"></i>
+                                <span>Ganti Foto Profil</span>
+                                <input id="photo-upload-input" type="file" accept="image/*" class="hidden" onchange="uploadHeroPhoto(event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         3. KEY HIGHLIGHTS / STATS BAR (Full-Width Fluid Overlapping Card)
+    ====================================================================== -->
+    <section aria-label="Ringkasan Pencapaian" class="relative z-20 -mt-12 sm:-mt-14 w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+        <div class="w-full">
+            <div class="bg-white rounded-2xl shadow-float border border-slate-100 p-6 sm:p-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-slate-200/80">
+                    
+                    <div class="flex items-center justify-start lg:justify-center gap-4 lg:px-6">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-briefcase text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="stat-1-val" class="text-xl sm:text-2xl font-extrabold text-navy-900 leading-tight">9+</div>
+                            <div id="stat-1-lbl" class="text-xs sm:text-sm font-medium text-slate-500">Years Experience</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-start lg:justify-center gap-4 lg:px-6">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-chart-line text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="stat-2-val" class="text-base sm:text-lg font-extrabold text-navy-900 leading-tight">Finance & Accounting</div>
+                            <div id="stat-2-lbl" class="text-xs sm:text-sm font-medium text-slate-500">Professional Background</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-start lg:justify-center gap-4 lg:px-6">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-laptop-code text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="stat-3-val" class="text-base sm:text-lg font-extrabold text-navy-900 leading-tight">Digital Projects</div>
+                            <div id="stat-3-lbl" class="text-xs sm:text-sm font-medium text-slate-500">Application Development</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-start lg:justify-center gap-4 lg:px-6">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-trophy text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="stat-4-val" class="text-xl sm:text-2xl font-extrabold text-navy-900 leading-tight">100%</div>
+                            <div id="stat-4-lbl" class="text-xs sm:text-sm font-medium text-slate-500">Commitment to Grow</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         4. ABOUT ME & WORK EXPERIENCE SPLIT SECTION + KEY COMPETENCIES SIDEBAR
+    ====================================================================== -->
+    <section id="about" class="w-full py-14 sm:py-16 lg:py-20">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-10 items-start">
+                
+                <!-- LEFT COLUMN: About Me / Tentang Saya (5 Cols) -->
+                <div class="lg:col-span-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                        <div class="sm:col-span-7 space-y-4">
+                            <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                                <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                                <span>About Me</span>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
+                                Tentang Saya
+                            </h2>
+                            <p id="about-description" class="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
+                                Saya adalah seorang profesional di bidang keuangan dengan pengalaman lebih dari 9 tahun di dunia Finance, Accounting, dan Tax, serta memiliki kemampuan dalam pengembangan aplikasi web untuk mendukung proses bisnis perusahaan.
+                            </p>
+                            <div class="pt-1 flex flex-wrap items-center gap-2">
+                                <a href="#experience" class="inline-flex items-center gap-2 bg-royal-600 hover:bg-royal-700 text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm transition-all">
+                                    <span>Learn More</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
+                                <button onclick="openProfileEditModal()" class="admin-only items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold px-3.5 py-2 rounded-full transition cursor-pointer">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-5">
+                            <div class="relative rounded-2xl overflow-hidden shadow-card border border-slate-200/70 bg-white group h-60 sm:h-64">
+                                <img 
+                                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" 
+                                    alt="Financial Analytics & Digital Workspace"
+                                    onerror="this.src='https://placehold.co/500x600/E2E8F0/0A2540?text=Financial+Analytics'"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                <div class="absolute inset-0 bg-gradient-to-t from-navy-900/75 via-transparent to-transparent flex items-end p-4">
+                                    <span class="inline-block px-2.5 py-1 bg-royal-600/95 text-white text-[11px] font-semibold rounded-lg shadow">
+                                        Finance + Tech Synergy
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE COLUMN: Work Experience Timeline (4 Cols) -->
+                <div id="experience" class="lg:col-span-4 scroll-mt-24">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                            <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                            <span>Work Experience</span>
+                        </div>
+                        <button onclick="openItemModal('Experience')" class="admin-only items-center gap-1 bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> Tambah
+                        </button>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight mb-6">
+                        Pengalaman Kerja
+                    </h2>
+
+                    <!-- Dynamic Experience Container -->
+                    <div id="experience-list" class="relative pl-6 border-l-2 border-blue-200 space-y-6"></div>
+                </div>
+
+                <!-- FAR RIGHT SIDEBAR CARD: Key Competencies (3 Cols) -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-2xl shadow-card border border-slate-200/75 p-6">
+                        <h3 class="text-lg font-extrabold text-navy-900 pb-3.5 mb-4 border-b border-slate-100">
+                            Key Competencies
+                        </h3>
+                        <ul class="space-y-3.5">
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-coins text-xs"></i>
+                                </span>
+                                <span>Finance & Accounting</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-scale-balanced text-xs"></i>
+                                </span>
+                                <span>Tax & Compliance</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-file-excel text-xs"></i>
+                                </span>
+                                <span>Microsoft Excel (Advanced)</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-database text-xs"></i>
+                                </span>
+                                <span>SAP</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-chart-pie text-xs"></i>
+                                </span>
+                                <span>Data Analysis</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                                <span class="w-8 h-8 rounded-lg bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-code text-xs"></i>
+                                </span>
+                                <span>Application Development</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         5. SKILLS & COMPETENCIES, EDUCATION, AND CERTIFICATIONS BAND
+    ====================================================================== -->
+    <section id="skills" class="w-full py-12 sm:py-16 bg-slate-100/80 border-y border-slate-200/70 scroll-mt-20">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-10 items-start">
+                
+                <!-- BLOCK A: Skills & Competencies - 5 Cols -->
+                <div class="lg:col-span-5 flex flex-col">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                                <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                                <span>Skills & Competencies</span>
+                            </div>
+                            <button onclick="openItemModal('Skills')" class="admin-only items-center gap-1 bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> Tambah
+                            </button>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-5">
+                            Kompetensi & Keahlian
+                        </h2>
+                    </div>
+
+                    <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3.5"></div>
+                </div>
+
+                <!-- BLOCK B: Education / Pendidikan - 3 Cols -->
+                <div id="education" class="lg:col-span-3 flex flex-col scroll-mt-24">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                                <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                                <span>Education</span>
+                            </div>
+                            <button onclick="openItemModal('Education')" class="admin-only items-center gap-1 bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> Tambah
+                            </button>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-5">
+                            Pendidikan
+                        </h2>
+                    </div>
+
+                    <div id="education-list" class="space-y-3"></div>
+                </div>
+
+                <!-- BLOCK C: Certifications / Sertifikat + Trophy Laurel Card - 4 Cols -->
+                <div id="certificates" class="lg:col-span-4 flex flex-col scroll-mt-24">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                                <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                                <span>Certifications</span>
+                            </div>
+                            <button onclick="openItemModal('Certificates')" class="admin-only items-center gap-1 bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> Tambah Sertifikat
+                            </button>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-5">
+                            Sertifikat
+                        </h2>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/75 shadow-sm grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                        <ul id="certificates-list" class="sm:col-span-8 space-y-2 text-xs font-semibold text-slate-700"></ul>
+
+                        <div class="sm:col-span-4 bg-gradient-to-b from-amber-50/80 to-slate-50 rounded-xl p-3 border border-amber-200/60 text-center flex flex-col items-center justify-center">
+                            <div class="w-11 h-11 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center mb-1.5 shadow-inner">
+                                <i class="fa-solid fa-award text-2xl"></i>
+                            </div>
+                            <p class="text-[10px] font-bold text-navy-900 leading-tight">
+                                Continuous Learning
+                            </p>
+                            <span class="text-[9px] text-slate-500 mt-0.5">for a Better Future</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         6. PORTFOLIO PROJECTS (Proyek & Pengembangan Aplikasi)
+    ====================================================================== -->
+    <section id="projects" class="w-full py-16 lg:py-20 bg-white scroll-mt-20">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-10 items-start">
+                
+                <!-- Left Intro Column (3 Cols) -->
+                <div class="lg:col-span-3 space-y-4">
+                    <div class="flex items-center gap-2.5 text-royal-600 font-bold text-xs uppercase tracking-wider">
+                        <span class="w-5 h-[2px] bg-royal-600 rounded-full"></span>
+                        <span>Portfolio Projects</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight leading-snug">
+                        Proyek & Pengembangan Aplikasi
+                    </h2>
+                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                        Beberapa proyek aplikasi yang pernah saya kembangkan untuk mendukung monitoring dan efisiensi proses bisnis di bidang keuangan. Klik kartu proyek untuk melihat detail & link pratinjau aplikasi.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <button onclick="openProjectModal(0)" class="inline-flex items-center gap-2 bg-royal-600 hover:bg-royal-700 text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm transition-all cursor-pointer">
+                            <span>View All Projects</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <button onclick="openItemModal('Projects')" class="admin-only items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-navy-950 text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-all cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> Tambah Proyek
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Project Cards Grid (9 Cols) -->
+                <div id="projects-grid" class="lg:col-span-9 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 xl:gap-6"></div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         7. CONTACT ME & FOOTER (Full-Width Deep Navy Blue)
+    ====================================================================== -->
+    <footer id="contact" class="w-full bg-navy-900 text-white pt-16 pb-8 scroll-mt-16">
+        <div class="w-full px-5 sm:px-8 lg:px-14 xl:px-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-12 pb-12 border-b border-white/10">
+                
+                <!-- Area 1: Brand Logo, Tagline & Social Icons (4 Cols) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-royal-600 to-sky-400 flex items-center justify-center text-white font-extrabold text-xl tracking-tighter shadow-md">
+                            <span class="lowercase">i</span><span class="text-navy-900">P</span>
+                        </div>
+                        <div>
+                            <div id="footer-brand-name" class="text-white font-bold text-lg leading-tight">Ilhamsyah Putra</div>
+                            <div id="footer-brand-role" class="text-sky-300 text-xs font-medium">Finance Professional</div>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-300 text-sm leading-relaxed max-w-sm pt-1">
+                        Terima kasih telah mengunjungi portfolio saya. Mari terhubung untuk peluang kolaborasi dan karir bersama.
+                    </p>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <a id="footer-linkedin" href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-royal-600 text-white flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-linkedin-in text-base"></i>
+                        </a>
+                        <a id="footer-github" href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-royal-600 text-white flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-github text-base"></i>
+                        </a>
+                        <a id="footer-email-icon" href="mailto:ilhamsyah.putra@email.com" aria-label="Email" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-royal-600 text-white flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-envelope text-base"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Area 2: Contact Me Details with Icons (3 Cols) -->
+                <div class="lg:col-span-3 space-y-4">
+                    <h3 class="text-lg font-bold text-white">Contact Me</h3>
+                    <ul class="space-y-3.5 text-sm text-slate-300">
+                        <li class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-sky-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-envelope text-xs"></i>
+                            </span>
+                            <a id="footer-email" href="mailto:ilhamsyah.putra@email.com" class="hover:text-sky-300 transition-colors break-all">
+                                ilhamsyah.putra@email.com
+                            </a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-sky-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-phone text-xs"></i>
+                            </span>
+                            <a id="footer-phone" href="tel:+6281234567890" class="hover:text-sky-300 transition-colors">
+                                +62 812 3456 7890
+                            </a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-sky-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-location-dot text-xs"></i>
+                            </span>
+                            <span id="footer-location">Medan, Indonesia</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Area 3: Interactive "Kirim Pesan" Contact Form (5 Cols) -->
+                <div class="lg:col-span-5">
+                    <h3 class="text-lg font-bold text-white mb-4">Kirim Pesan</h3>
+                    <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-3.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label for="sender-name" class="sr-only">Nama Anda</label>
+                                <input type="text" id="sender-name" required placeholder="Nama Anda *" class="w-full bg-white/5 border border-white/15 focus:border-sky-400 focus:bg-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-400 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="sender-email" class="sr-only">Email Anda</label>
+                                <input type="email" id="sender-email" required placeholder="Email Anda *" class="w-full bg-white/5 border border-white/15 focus:border-sky-400 focus:bg-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-400 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="sender-message" class="sr-only">Pesan Anda</label>
+                            <textarea id="sender-message" rows="3" required placeholder="Pesan Anda *" class="w-full bg-white/5 border border-white/15 focus:border-sky-400 focus:bg-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-400 outline-none transition-all resize-none"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-flex items-center gap-2 bg-royal-600 hover:bg-royal-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl shadow-lg shadow-royal-600/25 transition-all cursor-pointer">
+                                <i class="fa-solid fa-paper-plane text-xs"></i>
+                                <span>Kirim Pesan</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Bottom Copyright Bar + Subtle Admin Login Trigger -->
+            <div class="pt-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+                <p>© 2026 <span id="copyright-name">Ilhamsyah Putra</span>. All rights reserved.</p>
+                
+                <div class="flex items-center gap-4">
+                    <span class="tracking-wide text-slate-300 font-medium hidden md:inline">
+                        Finance &nbsp;•&nbsp; Technology &nbsp;•&nbsp; Better Solution
+                    </span>
+                    <button onclick="openAdminLoginModal()" title="Login Admin" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-colors cursor-pointer">
+                        <i class="fa-solid fa-lock text-[11px]"></i>
+                        <span>Admin</span>
+                    </button>
+                    <button onclick="scrollToTop()" aria-label="Kembali ke atas" class="w-9 h-9 rounded-full bg-white/10 hover:bg-royal-600 text-white flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fa-solid fa-arrow-up text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         MODAL 1: PROJECT DETAIL & LIVE PREVIEW MODAL
+    ====================================================================== -->
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200">
+            <div class="bg-navy-900 text-white px-6 py-5 flex items-center justify-between">
+                <div>
+                    <span id="modal-category" class="text-[11px] font-bold uppercase tracking-wider text-sky-300">Finance Application</span>
+                    <h3 id="modal-title" class="text-xl font-extrabold mt-0.5">Project Title</h3>
+                </div>
+                <button onclick="closeModal('project-modal')" aria-label="Tutup Modal" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <p id="modal-description" class="text-slate-600 text-sm leading-relaxed"></p>
+
+                <div>
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-navy-900 mb-3">Fitur Utama & Dampak Bisnis</h4>
+                    <ul id="modal-features" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-medium text-slate-700"></ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-navy-900 mb-2.5">Teknologi yang Digunakan</h4>
+                    <div id="modal-tech" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex gap-2">
+                        <button onclick="switchProject(-1)" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer">
+                            <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+                        </button>
+                        <button onclick="switchProject(1)" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer">
+                            Berikutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="modal-demo-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition">
+                            <span>Buka Live Preview</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                        <button onclick="closeModal('project-modal')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl cursor-pointer">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 2: CERTIFICATE LIGHTBOX PREVIEW MODAL
+    ====================================================================== -->
+    <div id="cert-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm" onclick="closeModal('cert-preview-modal')">
+        <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200" onclick="event.stopPropagation()">
+            <div class="bg-navy-900 text-white px-6 py-4 flex items-center justify-between">
+                <div>
+                    <span id="cert-preview-issuer" class="text-[11px] font-bold uppercase tracking-wider text-sky-300">Sertifikasi Profesional</span>
+                    <h3 id="cert-preview-title" class="text-lg font-extrabold">Judul Sertifikat</h3>
+                </div>
+                <button onclick="closeModal('cert-preview-modal')" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 bg-slate-100 flex flex-col items-center justify-center min-h-[280px]">
+                <img id="cert-preview-img" src="" alt="Screenshot Sertifikat" class="max-h-[68vh] w-auto rounded-xl shadow-md object-contain bg-white">
+                <p id="cert-preview-empty" class="hidden text-sm text-slate-500 text-center py-10">
+                    <i class="fa-regular fa-image text-3xl block mb-2 text-slate-400"></i>
+                    Belum ada gambar sertifikat yang diunggah untuk item ini.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 3: ADMIN LOGIN MODAL
+    ====================================================================== -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200">
+            <div class="bg-navy-900 text-white px-6 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-royal-600 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold">Login Panel Admin</h3>
+                        <p class="text-xs text-slate-300">Kelola konten portofolio Anda</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('admin-login-modal')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Username Admin</label>
+                    <input type="text" id="login-username" required placeholder="admin" class="w-full border border-slate-300 focus:border-royal-600 rounded-xl px-4 py-2.5 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Password Admin</label>
+                    <input type="password" id="login-password" required placeholder="admin123" class="w-full border border-slate-300 focus:border-royal-600 rounded-xl px-4 py-2.5 text-sm outline-none">
+                </div>
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-[11px] text-slate-600">
+                    <strong>Default Login:</strong> Username <code class="font-bold text-royal-700">admin</code> | Password <code class="font-bold text-royal-700">admin123</code> (sesuaikan dengan konstanta di Google Apps Script Anda).
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('admin-login-modal')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">Batal</button>
+                    <button type="submit" id="login-submit-btn" class="bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-sm cursor-pointer">
+                        Masuk ke Admin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 4: GOOGLE SHEETS API URL CONFIGURATION MODAL
+    ====================================================================== -->
+    <div id="api-config-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
+            <div class="bg-navy-900 text-white px-6 py-5 flex items-center justify-between">
+                <h3 class="text-lg font-extrabold">Koneksi Google Apps Script / Sheets</h3>
+                <button onclick="closeModal('api-config-modal')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="saveApiUrlConfig(event)" class="p-6 space-y-4">
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Tempelkan <strong>URL Web App (`/exec`)</strong> dari Google Apps Script Anda di bawah ini agar seluruh perubahan data dan upload gambar tersimpan otomatis di Google Sheets & Google Drive.
+                </p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">URL Google Apps Script Web App</label>
+                    <input type="url" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 focus:border-royal-600 rounded-xl px-4 py-2.5 text-xs outline-none">
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+                    <button type="button" onclick="syncInitialSeedToSheets()" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl border border-emerald-200 cursor-pointer">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Kirim Data Awal ke Sheets
+                    </button>
+                    <button type="button" onclick="resetApiUrlToDefault()" class="text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl border border-slate-200 cursor-pointer">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset ke URL Default
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeModal('api-config-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">Batal</button>
+                        <button type="submit" class="bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-5 py-2 rounded-xl cursor-pointer">Simpan & Sinkronkan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 5: DYNAMIC CRUD FORM MODAL (Add / Edit Projects, Certs, Exp, etc.)
+    ====================================================================== -->
+    <div id="crud-item-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div class="bg-navy-900 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                <h3 id="crud-modal-title" class="text-lg font-extrabold">Tambah / Edit Data</h3>
+                <button onclick="closeModal('crud-item-modal')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="crud-item-form" onsubmit="handleCrudSubmit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="crud-sheet-name">
+                <input type="hidden" id="crud-item-id">
+                <div id="crud-form-fields" class="space-y-4"></div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('crud-item-modal')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">Batal</button>
+                    <button type="submit" id="crud-save-btn" class="bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-sm cursor-pointer">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 6: EDIT PROFILE MODAL
+    ====================================================================== -->
+    <div id="profile-edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div class="bg-navy-900 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                <h3 class="text-lg font-extrabold">Edit Profil & Informasi Kontak</h3>
+                <button onclick="closeModal('profile-edit-modal')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleProfileSave(event)" class="p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
+                        <input type="text" id="prof-name" required class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jabatan / Role</label>
+                        <input type="text" id="prof-role" required class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ringkasan Hero (Atas)</label>
+                    <textarea id="prof-hero-summary" rows="2" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Tentang Saya (About Me)</label>
+                    <textarea id="prof-about" rows="3" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></textarea>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
+                        <input type="email" id="prof-email" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Telepon / WA</label>
+                        <input type="text" id="prof-phone" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Lokasi</label>
+                        <input type="text" id="prof-location" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">URL LinkedIn</label>
+                        <input type="url" id="prof-linkedin" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">URL GitHub</label>
+                        <input type="url" id="prof-github" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('profile-edit-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer">Batal</button>
+                    <button type="submit" class="bg-royal-600 hover:bg-royal-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer">Simpan Profil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         TOAST NOTIFICATION
+    ====================================================================== -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-[70] hidden items-center gap-3 bg-navy-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-white/15 max-w-sm">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="text-xs sm:text-sm font-medium leading-snug" id="toast-message">Notifikasi berhasil.</div>
+    </div>
+
+    <!-- =====================================================================
+         JAVASCRIPT APPLICATION ENGINE (Public View + Admin CRUD + Google Sheets)
+    ====================================================================== -->
+    <script>
+        // =========================================================================
+        // 1. DEFAULT INITIAL DATA (FALLBACK & OFFLINE CACHE)
+        // =========================================================================
+        const DEFAULT_DATA = {
+            profile: {
+                name: "Ilhamsyah Putra",
+                role: "Finance Professional",
+                heroSummary: "Berpengalaman dalam administrasi keuangan, akuntansi dan perpajakan, serta memiliki ketertarikan pada pengembangan aplikasi digital untuk meningkatkan efisiensi proses bisnis.",
+                about: "Saya adalah seorang profesional di bidang keuangan dengan pengalaman lebih dari 9 tahun di dunia Finance, Accounting, dan Tax, serta memiliki kemampuan dalam pengembangan aplikasi web untuk mendukung proses bisnis perusahaan.",
+                portraitUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
+                email: "ilhamsyah.putra@email.com",
+                phone: "+62 812 3456 7890",
+                location: "Medan, Indonesia",
+                linkedin: "https://linkedin.com",
+                github: "https://github.com"
+            },
+            experience: [
+                {
+                    ID: "EXP_1",
+                    Company: "PT Indonesia Asahan Aluminium (INALUM)",
+                    Period: "2021 – 2025",
+                    Role: "TAD Accounting & Tax",
+                    Description: "Administrasi akuntansi dan perpajakan, rekonsiliasi fiskal, serta pengelolaan dokumen keuangan perusahaan."
+                },
+                {
+                    ID: "EXP_2",
+                    Company: "PT Dinamika Mandiri Karya",
+                    Period: "2016 – 2021",
+                    Role: "TAD Administrasi Departemen Keuangan",
+                    Description: "Pengelolaan data transaksi, verifikasi invoice, monitoring arus kas, dan dokumentasi keuangan."
+                },
+                {
+                    ID: "EXP_3",
+                    Company: "PT Sumatera Tobacco Trading Company (STTC)",
+                    Period: "2015 – 2016",
+                    Role: "Warehouse & Production Support",
+                    Description: "Inventory control, pencatatan mutasi barang, dan pelaksanaan stock opname berkala."
+                }
+            ],
+            skills: [
+                { ID: "SKL_1", Name: "Microsoft Excel", Subtitle: "(Advanced)", Icon: "fa-file-excel" },
+                { ID: "SKL_2", Name: "SAP", Subtitle: "ERP System", Icon: "fa-database" },
+                { ID: "SKL_3", Name: "Accounting", Subtitle: "(Siklus Akuntansi)", Icon: "fa-calculator" },
+                { ID: "SKL_4", Name: "Finance & Keuangan", Subtitle: "Financial Analysis", Icon: "fa-chart-line" },
+                { ID: "SKL_5", Name: "Tax & Perpajakan", Subtitle: "Tax Compliance", Icon: "fa-scale-balanced" },
+                { ID: "SKL_6", Name: "Web Development", Subtitle: "(HTML, JS, Apps Script)", Icon: "fa-code" }
+            ],
+            education: [
+                {
+                    ID: "EDU_1",
+                    Degree: "S1 Manajemen",
+                    Institution: "Universitas Efarina",
+                    Note: "Program RPL • Est. Lulus: Oktober 2027"
+                }
+            ],
+            certificates: [
+                { ID: "CRT_1", Title: "Pelatihan Microsoft Excel Advanced", Issuer: "Microsoft Office Specialist", Year: "2023", ImageUrl: "" },
+                { ID: "CRT_2", Title: "Sertifikasi Brevet A & B (Pajak)", Issuer: "Ikatan Akuntan Indonesia", Year: "2022", ImageUrl: "" },
+                { ID: "CRT_3", Title: "Pelatihan SAP for Finance", Issuer: "SAP Training Center", Year: "2021", ImageUrl: "" },
+                { ID: "CRT_4", Title: "Certificate of Web Development", Issuer: "Digital Talent", Year: "2024", ImageUrl: "" }
+            ],
+            projects: [
+                {
+                    ID: "PRJ_1",
+                    Title: "Treasury Management System",
+                    Subtitle: "Monitoring posisi kas & proyeksi cash flow",
+                    Description: "Aplikasi web untuk memantau saldo kas harian di berbagai bank serta proyeksi arus kas mingguan dan bulanan guna menjaga likuiditas perusahaan.",
+                    Features: "Rekonsiliasi saldo kas otomatis; Proyeksi arus kas masuk & keluar; Ekspor laporan harian ke Excel",
+                    Tech: "HTML5, JavaScript, Google Apps Script",
+                    DemoUrl: ""
+                },
+                {
+                    ID: "PRJ_2",
+                    Title: "AR Intelligence Dashboard",
+                    Subtitle: "Monitoring piutang & aging analysis",
+                    Description: "Dashboard interaktif untuk memantau piutang usaha (Accounts Receivable) berdasarkan umur piutang dan menganalisis rasio kolektibilitas pelanggan.",
+                    Features: "Klasifikasi umur piutang (0-30, 31-60, >90 hari); Pengingat jatuh tempo otomatis; Visualisasi rasio kolektibilitas",
+                    Tech: "Google Sheets API, Chart.js, Tailwind CSS",
+                    DemoUrl: ""
+                },
+                {
+                    ID: "PRJ_3",
+                    Title: "AP Monitoring Dashboard",
+                    Subtitle: "Monitoring utang & jadwal pembayaran",
+                    Description: "Sistem kontrol tagihan vendor dan penjadwalan pembayaran (Accounts Payable) agar pembayaran berjalan tepat waktu dan bebas denda keterlambatan.",
+                    Features: "Kalender jatuh tempo tagihan vendor; Status approval pembayaran; Pencegahan duplikasi invoice",
+                    Tech: "Web App, JavaScript, REST API",
+                    DemoUrl: ""
+                },
+                {
+                    ID: "PRJ_4",
+                    Title: "Finance Document Management System",
+                    Subtitle: "Pengarsipan dokumen keuangan digital",
+                    Description: "Portal pengarsipan digital untuk voucher jurnal, faktur pajak, dan bukti potong dengan fitur pencarian cepat terintegrasi dengan Google Drive.",
+                    Features: "Pencarian dokumen berdasarkan nomor faktur/tanggal; Integrasi penyimpanan Google Drive; Kontrol akses berbasis peran",
+                    Tech: "Google Drive API, Apps Script, HTML/CSS",
+                    DemoUrl: ""
+                }
+            ]
+        };
+
+        // =========================================================================
+        // 2. APPLICATION STATE & INITIALIZATION (HARDCODED GOOGLE APPS SCRIPT URL)
+        // =========================================================================
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyX-4L6SGDL1KfxgZuP_TFJxLElLd64H_aBRIb5d7LjkPV2UUrCScgDbGtMMiDFpxo8/exec";
+        let appData = JSON.parse(localStorage.getItem("portfolio_data_v1")) || structuredClone(DEFAULT_DATA);
+        let gasApiUrl = localStorage.getItem("portfolio_gas_url") || DEFAULT_GAS_URL;
+        let adminSession = JSON.parse(sessionStorage.getItem("portfolio_admin_session")) || null;
+        let currentProjectIndex = 0;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (adminSession) {
+                document.body.classList.add("admin-active");
+            }
+            updateSyncBadge();
+            renderAllSections();
+
+            // Ambil data live terbaru dari Google Sheets untuk semua pengunjung
+            if (gasApiUrl) {
+                await fetchFromGoogleSheets();
+            }
+        });
+
+        function updateSyncBadge() {
+            const badge = document.getElementById("sync-status-badge");
+            if (gasApiUrl) {
+                badge.textContent = "Terhubung: Google Sheets Cloud (Aktif)";
+                badge.className = "hidden sm:inline-block text-[11px] font-bold bg-emerald-950 text-emerald-300 px-2.5 py-0.5 rounded-full";
+            } else {
+                badge.textContent = "Penyimpanan: Browser Lokal";
+                badge.className = "hidden sm:inline-block text-[11px] font-semibold bg-navy-950/15 px-2.5 py-0.5 rounded-full";
+            }
+        }
+
+        async function fetchFromGoogleSheets() {
+            try {
+                const res = await fetch(gasApiUrl);
+                const json = await res.json();
+                if (json.status === "success" && json.data) {
+                    const d = json.data;
+                    if (d.profile && Object.keys(d.profile).length > 0) {
+                        // Normalisasi key dari seedInitialData maupun saveProfile
+                        const mappedProfile = {
+                            ...appData.profile,
+                            ...d.profile,
+                            name: d.profile.name || d.profile.fullName || appData.profile.name,
+                            heroSummary: d.profile.heroSummary || d.profile.heroBio || appData.profile.heroSummary,
+                            about: d.profile.about || d.profile.aboutText || appData.profile.about,
+                            portraitUrl: d.profile.portraitUrl || d.profile.photoUrl || appData.profile.portraitUrl
+                        };
+                        appData.profile = mappedProfile;
+                    }
+                    if (d.experience && d.experience.length > 0) appData.experience = d.experience;
+                    if (d.skills && d.skills.length > 0) appData.skills = d.skills;
+                    if (d.education && d.education.length > 0) appData.education = d.education;
+                    if (d.certificates && d.certificates.length > 0) appData.certificates = d.certificates;
+                    if (d.projects && d.projects.length > 0) appData.projects = d.projects;
+                    
+                    localStorage.setItem("portfolio_data_v1", JSON.stringify(appData));
+                    renderAllSections();
+                }
+            } catch (err) {
+                console.warn("Gagal memuat dari Google Sheets, menggunakan cache lokal:", err);
+            }
+        }
+
+        // =========================================================================
+        // 3. RENDER ALL SECTIONS DYNAMICALLY
+        // =========================================================================
+        function renderAllSections() {
+            renderProfile();
+            renderExperience();
+            renderSkills();
+            renderEducation();
+            renderCertificates();
+            renderProjects();
+        }
+
+        function renderProfile() {
+            const p = appData.profile;
+            document.getElementById("nav-brand-name").textContent = p.name;
+            document.getElementById("nav-brand-role").textContent = p.role;
+            document.getElementById("hero-name").textContent = p.name;
+            document.getElementById("hero-summary").textContent = p.heroSummary;
+            document.getElementById("about-description").textContent = p.about;
+            if (p.portraitUrl) {
+                document.getElementById("hero-portrait-img").src = p.portraitUrl;
+            }
+            document.getElementById("footer-brand-name").textContent = p.name;
+            document.getElementById("footer-brand-role").textContent = p.role;
+            document.getElementById("copyright-name").textContent = p.name;
+            document.getElementById("footer-email").textContent = p.email;
+            document.getElementById("footer-email").href = `mailto:${p.email}`;
+            document.getElementById("footer-email-icon").href = `mailto:${p.email}`;
+            document.getElementById("footer-phone").textContent = p.phone;
+            document.getElementById("footer-phone").href = `tel:${p.phone.replace(/\s+/g, '')}`;
+            document.getElementById("footer-location").textContent = p.location;
+            document.getElementById("footer-linkedin").href = p.linkedin || "#";
+            document.getElementById("footer-github").href = p.github || "#";
+        }
+
+        function renderExperience() {
+            const container = document.getElementById("experience-list");
+            container.innerHTML = appData.experience.map(exp => `
+                <div class="relative group">
+                    <span class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-royal-600 ring-4 ring-blue-100"></span>
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-bold text-navy-900 text-base leading-snug">${escapeHtml(exp.Company)}</h3>
+                        <div class="admin-only items-center gap-1 shrink-0">
+                            <button onclick="openItemModal('Experience', '${exp.ID}')" class="p-1.5 rounded-lg bg-amber-100 text-amber-800 hover:bg-amber-200 text-xs cursor-pointer" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteItem('Experience', '${exp.ID}')" class="p-1.5 rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200 text-xs cursor-pointer" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 mt-1 mb-1">
+                        <span class="text-xs font-bold text-royal-600 bg-blue-50 px-2.5 py-0.5 rounded-md">${escapeHtml(exp.Period)}</span>
+                        <span class="text-xs font-semibold text-slate-600">| ${escapeHtml(exp.Role)}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">${escapeHtml(exp.Description)}</p>
+                </div>
+            `).join("");
+        }
+
+        function renderSkills() {
+            const container = document.getElementById("skills-grid");
+            container.innerHTML = appData.skills.map(skill => `
+                <div class="relative bg-white rounded-xl p-3.5 border border-slate-200/75 shadow-sm hover:border-royal-500/50 hover:shadow-md transition-all flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid ${escapeHtml(skill.Icon || 'fa-check-circle')} text-base"></i>
+                        </div>
+                        <div class="truncate">
+                            <div class="text-xs font-bold text-navy-900 leading-tight truncate">${escapeHtml(skill.Name)}</div>
+                            <div class="text-[11px] text-slate-500 truncate">${escapeHtml(skill.Subtitle)}</div>
+                        </div>
+                    </div>
+                    <div class="admin-only flex-col gap-1 shrink-0">
+                        <button onclick="openItemModal('Skills', '${skill.ID}')" class="p-1 rounded bg-amber-100 text-amber-800 text-[10px] cursor-pointer"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItem('Skills', '${skill.ID}')" class="p-1 rounded bg-rose-100 text-rose-700 text-[10px] cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderEducation() {
+            const container = document.getElementById("education-list");
+            container.innerHTML = appData.education.map(edu => `
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/75 shadow-sm flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-royal-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-graduation-cap text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-navy-900 text-base leading-snug">${escapeHtml(edu.Degree)}</h3>
+                            <p class="text-sm font-semibold text-slate-700 mt-0.5">${escapeHtml(edu.Institution)}</p>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">${escapeHtml(edu.Note)}</p>
+                        </div>
+                    </div>
+                    <div class="admin-only flex-col gap-1 shrink-0">
+                        <button onclick="openItemModal('Education', '${edu.ID}')" class="p-1.5 rounded-lg bg-amber-100 text-amber-800 text-xs cursor-pointer"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItem('Education', '${edu.ID}')" class="p-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderCertificates() {
+            const container = document.getElementById("certificates-list");
+            container.innerHTML = appData.certificates.map(cert => `
+                <li class="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-blue-50/80 transition group">
+                    <button type="button" onclick="openCertPreview('${cert.ID}')" class="flex items-start gap-2.5 text-left flex-1 cursor-pointer">
+                        <i class="fa-solid fa-certificate text-royal-600 mt-0.5 shrink-0"></i>
+                        <div>
+                            <span class="group-hover:text-royal-600 transition-colors block">${escapeHtml(cert.Title)}</span>
+                            <span class="text-[10px] text-slate-400 font-normal flex items-center gap-1 mt-0.5">
+                                <i class="fa-regular fa-eye text-royal-500"></i> Klik untuk lihat sertifikat
+                            </span>
+                        </div>
+                    </button>
+                    <div class="admin-only items-center gap-1 shrink-0">
+                        <button onclick="openItemModal('Certificates', '${cert.ID}')" class="p-1.5 rounded-lg bg-amber-100 text-amber-800 text-[11px] cursor-pointer" title="Edit Sertifikat"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItem('Certificates', '${cert.ID}')" class="p-1.5 rounded-lg bg-rose-100 text-rose-700 text-[11px] cursor-pointer" title="Hapus Sertifikat"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </li>
+            `).join("");
+        }
+
+        function renderProjects() {
+            const container = document.getElementById("projects-grid");
+            container.innerHTML = appData.projects.map((proj, idx) => `
+                <article class="group bg-white rounded-2xl border border-slate-200/85 shadow-card hover:shadow-float hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col justify-between relative">
+                    <!-- Admin Quick Actions Overlay -->
+                    <div class="admin-only absolute top-2.5 right-2.5 z-20 gap-1.5 bg-white/95 backdrop-blur px-2 py-1 rounded-xl shadow-md border border-slate-200">
+                        <button onclick="openItemModal('Projects', '${proj.ID}')" class="p-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs cursor-pointer" title="Edit Proyek"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItem('Projects', '${proj.ID}')" class="p-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs cursor-pointer" title="Hapus Proyek"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+
+                    <div onclick="openProjectModal(${idx})" class="cursor-pointer">
+                        <!-- Mini Dashboard UI Mockup -->
+                        <div class="bg-navy-900 p-2.5 pb-0">
+                            <div class="bg-slate-50 rounded-t-lg p-2.5 h-32 flex flex-col justify-between border border-slate-200/50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    </div>
+                                    <span class="text-[8px] font-bold text-royal-600 bg-blue-100 px-1.5 py-0.5 rounded uppercase">WEB APP</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1.5 my-1">
+                                    <div class="bg-white p-1.5 rounded border border-slate-100">
+                                        <div class="w-6 h-1 bg-slate-300 rounded mb-1"></div>
+                                        <div class="text-[9px] font-extrabold text-royal-600">LIVE</div>
+                                    </div>
+                                    <div class="bg-white p-1.5 rounded border border-slate-100">
+                                        <div class="w-6 h-1 bg-slate-300 rounded mb-1"></div>
+                                        <div class="text-[9px] font-extrabold text-emerald-600">+24%</div>
+                                    </div>
+                                    <div class="bg-white p-1.5 rounded border border-slate-100">
+                                        <div class="w-6 h-1 bg-slate-300 rounded mb-1"></div>
+                                        <div class="text-[9px] font-extrabold text-navy-900">100%</div>
+                                    </div>
+                                </div>
+                                <svg viewBox="0 0 180 42" class="w-full h-10 overflow-visible">
+                                    <path d="M0,35 Q30,10 60,25 T120,12 T180,5 L180,42 L0,42 Z" fill="rgba(29, 99, 237, 0.16)"/>
+                                    <path d="M0,35 Q30,10 60,25 T120,12 T180,5" fill="none" stroke="#1D63ED" stroke-width="2"/>
+                                    <rect x="20" y="22" width="10" height="20" rx="1.5" fill="#93C5FD"/>
+                                    <rect x="55" y="14" width="10" height="28" rx="1.5" fill="#3B82F6"/>
+                                    <rect x="90" y="18" width="10" height="24" rx="1.5" fill="#93C5FD"/>
+                                    <rect x="125" y="8" width="10" height="34" rx="1.5" fill="#1D63ED"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="p-4 pb-2">
+                            <h3 class="font-bold text-navy-900 text-sm leading-snug group-hover:text-royal-600 transition-colors">
+                                ${escapeHtml(proj.Title)}
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                ${escapeHtml(proj.Subtitle)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="px-4 pb-4 pt-2 flex items-center justify-between">
+                        ${proj.DemoUrl ? `<a href="${escapeHtml(proj.DemoUrl)}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-royal-600 hover:underline flex items-center gap-1"><i class="fa-solid fa-link text-[10px]"></i> Live Demo</a>` : `<span></span>`}
+                        <button onclick="openProjectModal(${idx})" class="w-8 h-8 rounded-full bg-royal-600 group-hover:bg-navy-900 text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        // =========================================================================
+        // 4. PUBLIC MODALS (PROJECT DETAIL & CERTIFICATE LIGHTBOX)
+        // =========================================================================
+        function openProjectModal(index) {
+            if (!appData.projects.length) return;
+            currentProjectIndex = index;
+            const proj = appData.projects[index];
+
+            document.getElementById("modal-category").textContent = "Portfolio Application";
+            document.getElementById("modal-title").textContent = proj.Title;
+            document.getElementById("modal-description").textContent = proj.Description;
+
+            const featuresArr = String(proj.Features || "").split(";").map(s => s.trim()).filter(Boolean);
+            document.getElementById("modal-features").innerHTML = featuresArr.map(item => `
+                <li class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <i class="fa-solid fa-circle-check text-royal-600 mt-0.5"></i>
+                    <span>${escapeHtml(item)}</span>
+                </li>
+            `).join("");
+
+            const techArr = String(proj.Tech || "").split(",").map(s => s.trim()).filter(Boolean);
+            document.getElementById("modal-tech").innerHTML = techArr.map(tag => `
+                <span class="px-3 py-1 rounded-full bg-blue-50 text-royal-700 text-xs font-semibold border border-blue-100">${escapeHtml(tag)}</span>
+            `).join("");
+
+            const demoBtn = document.getElementById("modal-demo-link");
+            if (proj.DemoUrl) {
+                demoBtn.href = proj.DemoUrl;
+                demoBtn.classList.remove("hidden");
+                demoBtn.classList.add("inline-flex");
+            } else {
+                demoBtn.classList.add("hidden");
+                demoBtn.classList.remove("inline-flex");
+            }
+
+            openModal("project-modal");
+        }
+
+        function switchProject(step) {
+            const len = appData.projects.length;
+            if (!len) return;
+            currentProjectIndex = (currentProjectIndex + step + len) % len;
+            openProjectModal(currentProjectIndex);
+        }
+
+        function openCertPreview(certId) {
+            const cert = appData.certificates.find(c => String(c.ID) === String(certId));
+            if (!cert) return;
+
+            document.getElementById("cert-preview-title").textContent = cert.Title;
+            document.getElementById("cert-preview-issuer").textContent = `${cert.Issuer || "Sertifikasi"} ${cert.Year ? "• " + cert.Year : ""}`;
+
+            const imgEl = document.getElementById("cert-preview-img");
+            const emptyEl = document.getElementById("cert-preview-empty");
+
+            if (cert.ImageUrl) {
+                imgEl.src = cert.ImageUrl;
+                imgEl.classList.remove("hidden");
+                emptyEl.classList.add("hidden");
+            } else {
+                imgEl.classList.add("hidden");
+                emptyEl.classList.remove("hidden");
+            }
+
+            openModal("cert-preview-modal");
+        }
+
+        // =========================================================================
+        // 5. ADMIN AUTHENTICATION & GOOGLE SHEETS API SYNC
+        // =========================================================================
+        function openAdminLoginModal() {
+            if (adminSession) {
+                showToast("Anda sudah berada dalam Mode Admin.");
+                return;
+            }
+            openModal("admin-login-modal");
+        }
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value;
+            const btn = document.getElementById("login-submit-btn");
+
+            btn.disabled = true;
+            btn.textContent = "Memverifikasi...";
+
+            try {
+                if (gasApiUrl) {
+                    const res = await fetch(gasApiUrl, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "login", username, password })
+                    });
+                    const json = await res.json();
+                    if (json.status !== "success") {
+                        showToast(json.message || "Login gagal!");
+                        return;
+                    }
+                } else {
+                    // Validasi default offline/lokal jika belum dihubungkan ke Google Sheets
+                    if (username !== "admin" || password !== "admin123") {
+                        showToast("Username atau password salah! (Default: admin / admin123)");
+                        return;
+                    }
+                }
+
+                adminSession = { username, password };
+                sessionStorage.setItem("portfolio_admin_session", JSON.stringify(adminSession));
+                document.body.classList.add("admin-active");
+                closeModal("admin-login-modal");
+                showToast("Berhasil masuk ke Mode Admin!");
+            } catch (err) {
+                showToast("Terjadi kesalahan koneksi saat login: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Masuk ke Admin";
+            }
+        }
+
+        function logoutAdmin() {
+            adminSession = null;
+            sessionStorage.removeItem("portfolio_admin_session");
+            document.body.classList.remove("admin-active");
+            showToast("Keluar dari Mode Admin. Menampilkan tampilan pengunjung.");
+        }
+
+        function openApiConfigModal() {
+            document.getElementById("gas-url-input").value = gasApiUrl || DEFAULT_GAS_URL;
+            openModal("api-config-modal");
+        }
+
+        async function resetApiUrlToDefault() {
+            localStorage.removeItem("portfolio_gas_url");
+            gasApiUrl = DEFAULT_GAS_URL;
+            document.getElementById("gas-url-input").value = DEFAULT_GAS_URL;
+            updateSyncBadge();
+            showToast("URL API dikembalikan ke URL default utama. Menyinkronkan...");
+            await fetchFromGoogleSheets();
+        }
+
+        async function saveApiUrlConfig(e) {
+            e.preventDefault();
+            gasApiUrl = document.getElementById("gas-url-input").value.trim() || DEFAULT_GAS_URL;
+            localStorage.setItem("portfolio_gas_url", gasApiUrl);
+            updateSyncBadge();
+            closeModal("api-config-modal");
+
+            if (gasApiUrl) {
+                showToast("Menyinkronkan data dengan Google Sheets...");
+                await fetchFromGoogleSheets();
+                showToast("Koneksi Google Sheets berhasil disimpan!");
+            }
+        }
+
+        async function syncInitialSeedToSheets() {
+            const url = document.getElementById("gas-url-input").value.trim();
+            if (!url) {
+                showToast("Masukkan URL Google Apps Script terlebih dahulu.");
+                return;
+            }
+            gasApiUrl = url;
+            localStorage.setItem("portfolio_gas_url", gasApiUrl);
+            updateSyncBadge();
+
+            showToast("Mengirim seluruh data awal ke Google Sheets...");
+            try {
+                await postToGas({ action: "saveProfile", data: appData.profile });
+                const collections = ["Experience", "Skills", "Education", "Certificates", "Projects"];
+                for (const sheetName of collections) {
+                    const key = sheetName.toLowerCase();
+                    for (const item of appData[key]) {
+                        await postToGas({ action: "upsertItem", sheetName, item });
+                    }
+                }
+                showToast("Semua data awal berhasil disinkronkan ke Google Sheets!");
+            } catch (err) {
+                showToast("Gagal menyinkronkan: " + err.message);
+            }
+        }
+
+        async function postToGas(payload) {
+            if (!gasApiUrl) return null;
+            const body = {
+                ...payload,
+                username: adminSession?.username,
+                password: adminSession?.password
+            };
+            const res = await fetch(gasApiUrl, {
+                method: "POST",
+                body: JSON.stringify(body)
+            });
+            return await res.json();
+        }
+
+        // =========================================================================
+        // 6. ADMIN CRUD OPERATIONS (PROFILE, PHOTO, EXPERIENCE, SKILLS, CERTS, PROJECTS)
+        // =========================================================================
+        function openProfileEditModal() {
+            const p = appData.profile;
+            document.getElementById("prof-name").value = p.name || "";
+            document.getElementById("prof-role").value = p.role || "";
+            document.getElementById("prof-hero-summary").value = p.heroSummary || "";
+            document.getElementById("prof-about").value = p.about || "";
+            document.getElementById("prof-email").value = p.email || "";
+            document.getElementById("prof-phone").value = p.phone || "";
+            document.getElementById("prof-location").value = p.location || "";
+            document.getElementById("prof-linkedin").value = p.linkedin || "";
+            document.getElementById("prof-github").value = p.github || "";
+            openModal("profile-edit-modal");
+        }
+
+        async function handleProfileSave(e) {
+            e.preventDefault();
+            appData.profile = {
+                ...appData.profile,
+                name: document.getElementById("prof-name").value.trim(),
+                role: document.getElementById("prof-role").value.trim(),
+                heroSummary: document.getElementById("prof-hero-summary").value.trim(),
+                about: document.getElementById("prof-about").value.trim(),
+                email: document.getElementById("prof-email").value.trim(),
+                phone: document.getElementById("prof-phone").value.trim(),
+                location: document.getElementById("prof-location").value.trim(),
+                linkedin: document.getElementById("prof-linkedin").value.trim(),
+                github: document.getElementById("prof-github").value.trim()
+            };
+
+            localStorage.setItem("portfolio_data_v1", JSON.stringify(appData));
+            renderProfile();
+            closeModal("profile-edit-modal");
+
+            if (gasApiUrl) {
+                showToast("Menyimpan profil ke Google Sheets...");
+                await postToGas({ action: "saveProfile", data: appData.profile });
+            }
+            showToast("Profil berhasil diperbarui!");
+        }
+
+        async function uploadHeroPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const base64 = await fileToBase64(file);
+            document.getElementById("hero-portrait-img").src = base64;
+
+            if (gasApiUrl) {
+                showToast("Mengunggah foto profil ke Google Drive...");
+                const res = await postToGas({
+                    action: "uploadImage",
+                    base64Data: base64,
+                    fileName: "portrait_" + Date.now() + "_" + file.name,
+                    mimeType: file.type
+                });
+                if (res && res.status === "success") {
+                    appData.profile.portraitUrl = res.url;
+                    await postToGas({ action: "saveProfile", data: appData.profile });
+                    showToast("Foto profil tersimpan di Google Drive & Sheets!");
+                }
+            } else {
+                appData.profile.portraitUrl = base64;
+                localStorage.setItem("portfolio_data_v1", JSON.stringify(appData));
+                showToast("Foto profil diperbarui di penyimpanan lokal!");
+            }
+        }
+
+        function openItemModal(sheetName, itemId = null) {
+            document.getElementById("crud-sheet-name").value = sheetName;
+            document.getElementById("crud-item-id").value = itemId || "";
+            const key = sheetName.toLowerCase();
+            const existing = itemId ? appData[key].find(i => String(i.ID) === String(itemId)) : {};
+
+            document.getElementById("crud-modal-title").textContent = `${itemId ? "Edit" : "Tambah"} ${sheetName}`;
+            const container = document.getElementById("crud-form-fields");
+
+            if (sheetName === "Experience") {
+                container.innerHTML = `
+                    <div><label class="block text-xs font-bold mb-1">Nama Perusahaan *</label><input name="Company" required value="${escapeHtml(existing?.Company || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-bold mb-1">Periode (Misal: 2021 – 2025) *</label><input name="Period" required value="${escapeHtml(existing?.Period || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">Posisi / Jabatan *</label><input name="Role" required value="${escapeHtml(existing?.Role || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    </div>
+                    <div><label class="block text-xs font-bold mb-1">Deskripsi Tugas *</label><textarea name="Description" rows="3" required class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm">${escapeHtml(existing?.Description || "")}</textarea></div>
+                `;
+            } else if (sheetName === "Skills") {
+                container.innerHTML = `
+                    <div><label class="block text-xs font-bold mb-1">Nama Keahlian *</label><input name="Name" required value="${escapeHtml(existing?.Name || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Keterangan Singkat</label><input name="Subtitle" value="${escapeHtml(existing?.Subtitle || "")}" placeholder="Misal: (Advanced)" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Ikon FontAwesome (Misal: fa-file-excel, fa-code, fa-coins)</label><input name="Icon" value="${escapeHtml(existing?.Icon || "fa-check-circle")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                `;
+            } else if (sheetName === "Education") {
+                container.innerHTML = `
+                    <div><label class="block text-xs font-bold mb-1">Jenjang / Jurusan *</label><input name="Degree" required value="${escapeHtml(existing?.Degree || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Nama Universitas / Institusi *</label><input name="Institution" required value="${escapeHtml(existing?.Institution || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Catatan / Tahun Lulus</label><input name="Note" value="${escapeHtml(existing?.Note || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                `;
+            } else if (sheetName === "Certificates") {
+                container.innerHTML = `
+                    <div><label class="block text-xs font-bold mb-1">Nama Sertifikat *</label><input name="Title" required value="${escapeHtml(existing?.Title || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-bold mb-1">Penerbit / Lembaga</label><input name="Issuer" value="${escapeHtml(existing?.Issuer || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">Tahun</label><input name="Year" value="${escapeHtml(existing?.Year || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Upload Screenshot / Gambar Sertifikat</label>
+                        <input type="file" id="cert-file-input" accept="image/*" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs bg-slate-50">
+                        <input type="hidden" name="ImageUrl" value="${escapeHtml(existing?.ImageUrl || "")}">
+                        ${existing?.ImageUrl ? `<p class="text-[11px] text-emerald-600 mt-1">Gambar saat ini sudah tersimpan. Pilih file baru jika ingin menggantinya.</p>` : ""}
+                    </div>
+                `;
+            } else if (sheetName === "Projects") {
+                container.innerHTML = `
+                    <div><label class="block text-xs font-bold mb-1">Nama Aplikasi / Proyek *</label><input name="Title" required value="${escapeHtml(existing?.Title || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Ringkasan Singkat (Tampil di Kartu) *</label><input name="Subtitle" required value="${escapeHtml(existing?.Subtitle || "")}" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Link Review / Live Demo Aplikasi (URL)</label><input type="url" name="DemoUrl" value="${escapeHtml(existing?.DemoUrl || "")}" placeholder="https://..." class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Deskripsi Lengkap</label><textarea name="Description" rows="3" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm">${escapeHtml(existing?.Description || "")}</textarea></div>
+                    <div><label class="block text-xs font-bold mb-1">Fitur Utama (Pisahkan dengan titik koma ; )</label><input name="Features" value="${escapeHtml(existing?.Features || "")}" placeholder="Fitur 1; Fitur 2; Fitur 3" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold mb-1">Teknologi (Pisahkan dengan koma , )</label><input name="Tech" value="${escapeHtml(existing?.Tech || "")}" placeholder="HTML5, JavaScript, Google Sheets" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm"></div>
+                `;
+            }
+
+            openModal("crud-item-modal");
+        }
+
+        async function handleCrudSubmit(e) {
+            e.preventDefault();
+            const sheetName = document.getElementById("crud-sheet-name").value;
+            const itemId = document.getElementById("crud-item-id").value || ("ID_" + Date.now());
+            const saveBtn = document.getElementById("crud-save-btn");
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Menyimpan...";
+
+            try {
+                const formData = new FormData(e.target);
+                const itemObj = { ID: itemId };
+                formData.forEach((val, key) => { itemObj[key] = val; });
+
+                // Jika ada file gambar sertifikat yang dipilih
+                if (sheetName === "Certificates") {
+                    const fileInput = document.getElementById("cert-file-input");
+                    if (fileInput && fileInput.files[0]) {
+                        const file = fileInput.files[0];
+                        const base64 = await fileToBase64(file);
+                        if (gasApiUrl) {
+                            showToast("Mengunggah gambar sertifikat ke Google Drive...");
+                            const uploadRes = await postToGas({
+                                action: "uploadImage",
+                                base64Data: base64,
+                                fileName: "cert_" + Date.now() + "_" + file.name,
+                                mimeType: file.type
+                            });
+                            if (uploadRes && uploadRes.status === "success") {
+                                itemObj.ImageUrl = uploadRes.url;
+                            }
+                        } else {
+                            itemObj.ImageUrl = base64;
+                        }
+                    }
+                }
+
+                const key = sheetName.toLowerCase();
+                const idx = appData[key].findIndex(i => String(i.ID) === String(itemId));
+                if (idx >= 0) {
+                    appData[key][idx] = itemObj;
+                } else {
+                    appData[key].push(itemObj);
+                }
+
+                localStorage.setItem("portfolio_data_v1", JSON.stringify(appData));
+                renderAllSections();
+                closeModal("crud-item-modal");
+
+                if (gasApiUrl) {
+                    await postToGas({ action: "upsertItem", sheetName, item: itemObj });
+                    showToast(`Data ${sheetName} tersimpan di Google Sheets!`);
+                } else {
+                    showToast(`Data ${sheetName} berhasil disimpan!`);
+                }
+            } catch (err) {
+                showToast("Gagal menyimpan data: " + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Simpan Perubahan";
+            }
+        }
+
+        async function deleteItem(sheetName, itemId) {
+            const key = sheetName.toLowerCase();
+            appData[key] = appData[key].filter(i => String(i.ID) !== String(itemId));
+            localStorage.setItem("portfolio_data_v1", JSON.stringify(appData));
+            renderAllSections();
+
+            if (gasApiUrl) {
+                showToast("Menghapus data dari Google Sheets...");
+                await postToGas({ action: "deleteItem", sheetName, id: itemId });
+            }
+            showToast("Item berhasil dihapus.");
+        }
+
+        // =========================================================================
+        // 7. CONTACT FORM, CV DOWNLOAD & UTILITIES
+        // =========================================================================
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById("sender-name").value.trim();
+            const email = document.getElementById("sender-email").value.trim();
+            const message = document.getElementById("sender-message").value.trim();
+
+            if (gasApiUrl) {
+                try {
+                    await fetch(gasApiUrl, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "sendMessage", name, email, message })
+                    });
+                } catch (e) { console.warn(e); }
+            }
+
+            showToast(`Terima kasih, ${name}! Pesan Anda telah berhasil dikirim.`);
+            event.target.reset();
+        }
+
+        function handleDownloadCV() {
+            const p = appData.profile;
+            const expText = appData.experience.map(e => `- ${e.Company} (${e.Period}) | ${e.Role}`).join("\n");
+            const certText = appData.certificates.map(c => `- ${c.Title}`).join("\n");
+
+            const cvContent = `CURRICULUM VITAE - ${p.name.toUpperCase()}
+Role: ${p.role}
+Location: ${p.location}
+Email: ${p.email} | Phone: ${p.phone}
+
+RINGKASAN PROFESIONAL:
+${p.about}
+
+PENGALAMAN KERJA:
+${expText}
+
+SERTIFIKASI:
+${certText}`;
+
+            const blob = new Blob([cvContent], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `CV_${p.name.replace(/\s+/g, "_")}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("File ringkasan CV berhasil diunduh!");
+        }
+
+        function openModal(id) {
+            const el = document.getElementById(id);
+            el.classList.remove("hidden");
+            el.classList.add("flex");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            el.classList.add("hidden");
+            el.classList.remove("flex");
+            document.body.style.overflow = "";
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById("toast-notification");
+            document.getElementById("toast-message").textContent = message;
+            toast.classList.remove("hidden");
+            toast.classList.add("flex");
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add("hidden");
+                toast.classList.remove("flex");
+            }, 4000);
+        }
+
+        const mobileBtn = document.getElementById("mobile-menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        mobileBtn.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+        document.querySelectorAll(".mobile-nav-link").forEach(link => {
+            link.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        const sections = document.querySelectorAll("section[id], footer[id]");
+        const navLinks = document.querySelectorAll(".nav-link");
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 130) {
+                    current = section.getAttribute("id");
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove("active", "text-royal-600");
+                if (link.getAttribute("href") === `#${current}`) {
+                    link.classList.add("active", "text-royal-600");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
